@@ -82,6 +82,22 @@ Auto-expands multiline text areas to fit their content and enlarges the virtuali
 
 **[Install Rewst Form Enhancements](https://raw.githubusercontent.com/greenloop-it-solutions/msp-browser-enhancements/main/scripts/rewst/form-enhancements.user.js)** — opens the Tampermonkey install prompt. Review the metadata block before confirming.
 
+### Empath
+
+#### Empath Video Unlock (scrub / skip / speed)
+
+Re-enables seeking, scrubbing and keyboard control in the Empath LMS video player, and stops the player from auto-pausing when the window loses focus.
+
+| | |
+| --- | --- |
+| **Version** | `1.1.0` |
+| **Matches** | `https://app.empathmsp.com/*`<br>`https://*.empathmsp.com/*` |
+| **Grants** | `none` |
+| **Runs at** | `document-start` |
+| **Source** | [scripts/empath/video-unlock.user.js](https://github.com/greenloop-it-solutions/msp-browser-enhancements/blob/main/scripts/empath/video-unlock.user.js) |
+
+**[Install Empath Video Unlock (scrub / skip / speed)](https://raw.githubusercontent.com/greenloop-it-solutions/msp-browser-enhancements/main/scripts/empath/video-unlock.user.js)** — opens the Tampermonkey install prompt. Review the metadata block before confirming.
+
 <!-- END SCRIPT CATALOG -->
 
 > This catalog is generated from the userscript metadata blocks by
