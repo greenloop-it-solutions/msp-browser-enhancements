@@ -57,6 +57,13 @@ Fields in this order:
 Required regardless: `@name`, `@namespace`, `@version`, `@description`, `@match`,
 `@grant`. Omit other fields only when they genuinely do not apply.
 
+**`@namespace` is the same for every script in this repository** — the repository URL,
+stored in `package.json` under `userscripts.namespace` and enforced by the validator.
+Tampermonkey identifies an installed script by `@name` plus `@namespace`, so a script with
+a different namespace is a different script to Tampermonkey: the next update installs
+alongside the old copy instead of replacing it. Changing the namespace is an installation
+change (MAJOR) and requires everyone to uninstall and reinstall.
+
 `@updateURL` and `@downloadURL` always point at the **`main` branch raw URL**, never a
 commit SHA — a pinned URL would freeze the script at one version forever.
 

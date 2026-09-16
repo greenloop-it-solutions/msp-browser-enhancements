@@ -19,6 +19,7 @@
     "owner": "greenloop-it-solutions",
     "repository": "msp-browser-enhancements",
     "branch": "main",
+    "namespace": "https://github.com/greenloop-it-solutions/msp-browser-enhancements",
     "scriptsDirectory": "scripts",
     "applications": {
       "rewst": "Rewst",

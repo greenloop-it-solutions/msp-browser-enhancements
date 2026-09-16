@@ -23,6 +23,16 @@ load-bearing.
   These values are also stored in `package.json` under `userscripts`, which is the single
   source of truth the tooling reads.
 
+- **Every script shares one `@namespace`:**
+  `https://github.com/greenloop-it-solutions/msp-browser-enhancements`
+
+  Tampermonkey identifies an installed script by `@name` plus `@namespace`. A script whose
+  namespace differs is a *different* script to Tampermonkey, so changing it turns the next
+  update into a second, parallel installation rather than an upgrade in place. The
+  validator enforces the shared value. Changing it is an installation change and therefore
+  a MAJOR version bump, and every existing install must be removed and reinstalled — never
+  change it without asking.
+
 ---
 
 ## Working agreement

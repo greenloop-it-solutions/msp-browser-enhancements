@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Empath Video Unlock (scrub / skip / speed)
-// @namespace    greenloopsolutions.com/smoody
-// @version      1.1.0
+// @namespace    https://github.com/greenloop-it-solutions/msp-browser-enhancements
+// @version      2.0.0
 // @description  Re-enables seeking, scrubbing and keyboard control in the Empath LMS video player, and stops the player from auto-pausing when the window loses focus.
 // @author       Stephen Moody
 // @homepageURL  https://github.com/greenloop-it-solutions/msp-browser-enhancements

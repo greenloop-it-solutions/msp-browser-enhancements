@@ -74,7 +74,7 @@ Auto-expands multiline text areas to fit their content and enlarges the virtuali
 
 | | |
 | --- | --- |
-| **Version** | `1.1.0` |
+| **Version** | `2.0.0` |
 | **Matches** | `https://app.rewst.io/organizations/*/form/*` |
 | **Grants** | `none` |
 | **Runs at** | `document-idle` |
@@ -90,7 +90,7 @@ Re-enables seeking, scrubbing and keyboard control in the Empath LMS video playe
 
 | | |
 | --- | --- |
-| **Version** | `1.1.0` |
+| **Version** | `2.0.0` |
 | **Matches** | `https://app.empathmsp.com/*`<br>`https://*.empathmsp.com/*` |
 | **Grants** | `none` |
 | **Runs at** | `document-start` |

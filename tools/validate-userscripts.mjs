@@ -275,6 +275,22 @@ function validateSingularFields(script) {
     }
 }
 
+/**
+ * Every script shares one @namespace. Tampermonkey identifies an installed
+ * script by name plus namespace, so a drifting namespace silently turns an
+ * update into a second, parallel installation.
+ */
+function validateNamespace(script) {
+    const namespace = firstValue(script.block, 'namespace');
+
+    if (namespace !== undefined && namespace !== REPOSITORY.namespace) {
+        error(
+            script.repositoryPath,
+            `@namespace must be ${REPOSITORY.namespace} but is ${namespace}`
+        );
+    }
+}
+
 function validateVersion(script) {
     const version = firstValue(script.block, 'version');
 
@@ -485,6 +501,7 @@ async function main() {
 
         validateRequiredFields(script);
         validateSingularFields(script);
+        validateNamespace(script);
         validateVersion(script);
         validateMatches(script);
         validateGrants(script);
