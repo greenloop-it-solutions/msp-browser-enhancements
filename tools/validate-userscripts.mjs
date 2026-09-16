@@ -291,6 +291,15 @@ function validateNamespace(script) {
     }
 }
 
+/** Attribution is repository-wide, not per script. */
+function validateAuthor(script) {
+    const author = firstValue(script.block, 'author');
+
+    if (author !== undefined && author !== REPOSITORY.author) {
+        error(script.repositoryPath, `@author must be ${REPOSITORY.author} but is ${author}`);
+    }
+}
+
 function validateVersion(script) {
     const version = firstValue(script.block, 'version');
 
@@ -502,6 +511,7 @@ async function main() {
         validateRequiredFields(script);
         validateSingularFields(script);
         validateNamespace(script);
+        validateAuthor(script);
         validateVersion(script);
         validateMatches(script);
         validateGrants(script);

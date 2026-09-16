@@ -3,7 +3,7 @@
 // @namespace    https://github.com/greenloop-it-solutions/msp-browser-enhancements
 // @version      2.0.0
 // @description  Re-enables seeking, scrubbing and keyboard control in the Empath LMS video player, and stops the player from auto-pausing when the window loses focus.
-// @author       Stephen Moody
+// @author       GreenLoop IT Solutions
 // @homepageURL  https://github.com/greenloop-it-solutions/msp-browser-enhancements
 // @supportURL   https://github.com/greenloop-it-solutions/msp-browser-enhancements/issues
 // @updateURL    https://raw.githubusercontent.com/greenloop-it-solutions/msp-browser-enhancements/main/scripts/empath/video-unlock.user.js
