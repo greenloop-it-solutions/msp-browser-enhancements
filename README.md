@@ -57,8 +57,8 @@ Rules this repository holds itself to:
 3. Review the `@match`, `@grant`, and code sections.
 4. Click **Install**.
 
-Each script is installed on its own. There is no single link that installs everything —
-see [Bulk installation](#bulk-installation) for why, and for the alternatives.
+Each script is installed on its own. To install all of them in one step instead, use the
+import package from the latest release — see [Bulk installation](#bulk-installation).
 
 ---
 
@@ -131,47 +131,67 @@ A published version is never reduced or reused.
 
 ## Bulk installation
 
-**There is no supported way to install every script in this repository with one click,
-and this repository will not implement one.** A "batch installer" that silently installs
-scripts defeats the review step that makes userscripts safe. Installation stays visible
-and user-controlled.
+Two supported ways to install, depending on what you want.
 
-The practical alternatives:
+### Per script, from the catalog — the default
 
-### Recommended: install the scripts you want, individually
+Click the **Install** link for each script you want in the [catalog](#script-catalog).
+This is the right choice for most people: you see each script's source and permissions
+before it installs, and each one wires up its own update URL.
 
-Most people need two or three scripts, not all of them. Installing from each raw URL is
-the only method that wires up per-script `@updateURL` metadata correctly, so each script
-keeps updating on its own afterwards.
+### Everything at once, from the latest release
 
-### Moving an existing setup to another machine: Tampermonkey's own export/import
+Each release publishes a **Tampermonkey import package** containing every userscript in
+this repository.
 
-Tampermonkey can export your installed scripts and settings to a ZIP file and import
-that file elsewhere. This is the documented, version-matched way to move a configuration
-between browsers or machines:
+**[Download the latest release](https://github.com/greenloop-it-solutions/msp-browser-enhancements/releases/latest)**
 
-1. On the source browser, open the Tampermonkey dashboard.
-2. Go to **Utilities**.
-3. Under **Zip**, choose **Export** (optionally "Export with local storage" if a script
-   stores data you want to carry over). A `.zip` file downloads.
-4. On the target browser, open **Utilities**, and under **Zip → Import** select that
-   file and import it.
+1. Download `msp-browser-enhancements-tampermonkey-import.txt` from the release assets.
+2. Open the Tampermonkey dashboard.
+3. Go to the **Utilities** tab.
+4. Under **Import from file**, choose the downloaded file.
+5. Click **Import**.
+6. Tampermonkey lists every script in the package for confirmation. **Review the match
+   patterns and grants**, then confirm.
 
-Caveats:
+The import is still shown to you and still requires confirmation — this is Tampermonkey's
+own import screen, not a silent installer. This repository does not implement a remote
+"batch installer"; installation always stays visible and user-controlled.
 
-- The export format is Tampermonkey's own and **varies between extension versions**.
-  Export and import with the same major Tampermonkey version where possible.
-- This repository deliberately does **not** generate a synthetic import package. Doing so
-  would mean reproducing an undocumented internal format, and a package built against the
-  wrong extension version can import scripts without their update metadata — leaving you
-  with scripts that silently never update again.
-- An import package is not a substitute for per-script update URLs. Scripts installed
-  from the raw GitHub URLs above keep themselves current; scripts restored from a ZIP
-  only update if their original `@updateURL` survived the round trip.
+**Each imported script keeps its own `@updateURL`**, so scripts installed this way
+continue to update from GitHub exactly as if you had installed them individually. The
+package sets `file_url` and `check_for_updates` on every entry for this reason.
 
-If a documented, version-stable package format becomes available, a `npm run package`
-generator may be added to produce it as a **release artifact only** — generated archives
-are never committed to the source tree.
+Things to know before importing:
+
+- **Importing replaces a script you already have installed.** Any local edits you made to
+  an installed copy — a changed `CONFIG` value, a disabled feature — are overwritten. If
+  you have tweaked a script locally, install the others individually instead.
+- **The package never carries script storage.** Every entry ships with empty storage, so
+  nothing from anyone's browser profile travels with it.
+- **The backup format is Tampermonkey's own and is versioned.** The package is built to
+  format `version: "1"`. If a future Tampermonkey release changes that format, the import
+  may stop working — the per-script raw URLs in the catalog always work and are the
+  authoritative installation method.
+
+### When a release is published
+
+A release is cut automatically when a commit to `main` changes any script's `@version`,
+adds a script, or removes one. The release tag is derived from a hash of every script
+name and version, so documentation and tooling commits do not produce a release.
+
+This is the same rule Tampermonkey itself applies: **a code change without a `@version`
+bump is not a release.**
+
+### Moving an existing setup between browsers
+
+To carry your *current* configuration — including local edits and script storage — use
+Tampermonkey's own export rather than this package:
+
+1. Source browser → Tampermonkey dashboard → **Utilities** → **Export**.
+2. Target browser → **Utilities** → **Import from file** → select that file.
+
+Use the same major Tampermonkey version on both ends where possible.
 
 ---
 
@@ -219,7 +239,11 @@ npm install          # no runtime dependencies; creates the lockfile CI uses
 npm run validate     # validate all userscripts
 npm run catalog      # regenerate the README script catalog
 npm run check        # validate + verify the catalog is current (what CI runs)
+npm run package      # build the Tampermonkey import package into dist/
 ```
+
+`dist/` is generated and gitignored — release artifacts are never committed to the source
+tree. The build is reproducible: the same scripts always produce a byte-identical package.
 
 CI runs `npm run check` on pull requests and on pushes to `main`. It never creates
 commits on your behalf — if the catalog is stale, the build fails and you regenerate and

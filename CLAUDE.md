@@ -314,6 +314,12 @@ rejects them. If one is genuinely necessary, annotate that line with
 **Never commit** secrets, credentials, session data, client information, access tokens,
 private URLs, or any sensitive value.
 
+`refs/` and `.migration/` are gitignored working directories for local reference material
+— real Tampermonkey backups, exported page markup, untouched copies of scripts being
+migrated. Material there comes straight out of a browser profile and can carry script
+storage, cookies, and customer data. Read from them freely; never commit them, never
+copy their contents into a tracked file without reviewing what is being copied.
+
 Before any push to a public repository, scan the whole repository for:
 
 company names that should not be public · client names · client identifiers · ticket
@@ -331,6 +337,7 @@ Present findings to the user and **wait for their decision**.
 npm run validate     # validate every .user.js file; nonzero exit on failure
 npm run catalog      # regenerate the README script catalog from metadata
 npm run check        # validate + confirm the catalog is current (what CI runs)
+npm run package      # build the Tampermonkey import package into dist/
 ```
 
 **Run `npm run check` before finishing any task that touches a script or the README.**
@@ -340,6 +347,24 @@ The README region between `<!-- BEGIN SCRIPT CATALOG -->` and
 
 CI (`.github/workflows/validate-userscripts.yml`) runs on pull requests and pushes to
 `main`. It must never create automatic commits.
+
+### Import package and releases
+
+`tools/build-import-package.mjs` writes a Tampermonkey import package in the format
+Tampermonkey's own **Utilities → Export** produces (JSON, base64 sources, backup format
+`version: "1"`). Rules for it:
+
+- Never invent fields. Every field must mirror one that appears in a genuine export; a
+  real sample belongs in the gitignored `refs/` directory for comparison.
+- Always write `storage.data` empty. Real script storage can hold tokens and customer
+  data and must never be published.
+- Always set `file_url` and `check_for_updates` so imported scripts keep auto-updating.
+- Keep the build reproducible — no wall-clock timestamps or random UUIDs.
+- `dist/` is gitignored. Generated archives are never committed.
+
+`.github/workflows/release-import-package.yml` publishes the package. Its tag is
+`pkg-<hash>` over every script name and version, so a `@version` change releases and a
+docs-only commit does not. Do not change that rule without asking.
 
 ---
 

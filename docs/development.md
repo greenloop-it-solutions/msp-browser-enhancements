@@ -219,7 +219,11 @@ npm run validate     # validate every .user.js file
 npm run catalog      # regenerate the README script catalog
 npm run catalog:check
 npm run check        # validate + catalog:check — what CI runs
+npm run package      # build the Tampermonkey import package into dist/
 ```
+
+`dist/` is gitignored; generated archives are never committed. `npm run package` is
+reproducible — the same set of scripts always produces a byte-identical file.
 
 Run `npm run check` before opening a pull request.
 
@@ -241,6 +245,27 @@ The region between `<!-- BEGIN SCRIPT CATALOG -->` and `<!-- END SCRIPT CATALOG 
 `README.md` is produced by `npm run catalog` from the metadata blocks. Never hand-edit
 it. CI fails if it is stale — regenerate and commit it yourself; the workflow never
 creates commits.
+
+### The import package and releases
+
+`tools/build-import-package.mjs` writes a Tampermonkey import package in the format
+Tampermonkey's own **Utilities → Export** produces: JSON with base64-encoded sources,
+backup format `version: "1"`. Every field mirrors one that appears in a genuine export.
+
+Each entry sets `file_url` to the script's raw URL and `check_for_updates: true`, so
+imported scripts keep updating from GitHub. Script storage is always written empty —
+real storage from a browser profile can hold tokens and customer data and must never
+be published.
+
+`.github/workflows/release-import-package.yml` publishes the package as a release. The
+release tag is `pkg-<hash>`, where the hash covers every script name and version, so:
+
+- Changing any `@version`, adding a script, or removing one produces a new tag and a new
+  release.
+- A docs or tooling commit produces a tag that already exists, and the workflow skips it.
+
+If a future Tampermonkey release changes the backup format, confirm the new shape against
+a fresh export before bumping `BACKUP_FORMAT_VERSION`.
 
 ## Adding a new script
 

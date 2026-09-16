@@ -1,0 +1,113 @@
+name: Publish import package
+
+# Builds the Tampermonkey import package and publishes it as a release.
+#
+# "Significant commit" is defined as one that changes any userscript's @version
+# (or adds/removes a script). The release tag is derived from a hash of every
+# script name and version, so a docs-only or tooling-only commit produces a tag
+# that already exists and this workflow skips it. That matches how userscripts
+# actually release: a code change without a @version bump is not a release.
+#
+# Can also be run manually from the Actions tab.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/**/*.user.js'
+      - 'tools/build-import-package.mjs'
+      - '.github/workflows/release-import-package.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-import-package
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Build and publish package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Never publish a package built from scripts that fail validation.
+      - name: Validate userscripts
+        run: npm run validate
+
+      - name: Determine release tag
+        id: tag
+        run: echo "tag=$(node tools/build-import-package.mjs --print-tag)" >> "$GITHUB_OUTPUT"
+
+      - name: Check whether this catalog was already released
+        id: existing
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "No script @version changed since the last package; skipping."
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build import package
+        if: steps.existing.outputs.exists == 'false'
+        run: npm run package
+
+      - name: Compose release notes
+        if: steps.existing.outputs.exists == 'false'
+        env:
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          {
+            echo "Tampermonkey import package containing every userscript in this repository."
+            echo
+            echo "## Included scripts"
+            echo
+            node -e '
+              const manifest = require("./dist/package-manifest.json");
+              for (const script of manifest.scripts) {
+                console.log(`- **${script.name}** \`${script.version}\` — [source](${script.rawUrl})`);
+              }
+            '
+            echo
+            echo "## Install the whole package"
+            echo
+            echo "1. Download \`msp-browser-enhancements-tampermonkey-import.txt\` from the assets below."
+            echo "2. Open the Tampermonkey dashboard and go to **Utilities**."
+            echo "3. Under **Import from file**, choose the downloaded file and click **Import**."
+            echo "4. Tampermonkey lists each script for confirmation. Review the matches and grants, then confirm."
+            echo
+            echo "Each imported script keeps its own \`@updateURL\`, so it continues to update from GitHub afterwards."
+            echo
+            echo "> Importing a script you already have installed replaces that copy. Local edits to an installed script are lost."
+            echo "> The backup format is Tampermonkey's own and is versioned; if a future Tampermonkey release changes it, install from the per-script raw URLs in the README instead."
+          } > release-notes.md
+
+      - name: Publish release
+        if: steps.existing.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          gh release create "$TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "Userscript package $(date -u +%Y-%m-%d)" \
+            --notes-file release-notes.md \
+            dist/msp-browser-enhancements-tampermonkey-import.txt \
+            dist/package-manifest.json

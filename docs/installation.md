@@ -85,24 +85,44 @@ Tampermonkey dashboard → **Installed userscripts** → trash icon next to the 
 To disable temporarily instead, use the **Enabled** toggle in the same row, or the
 per-page toggle in the toolbar popup.
 
+## Installing everything at once
+
+Each release publishes a Tampermonkey import package containing every userscript in this
+repository.
+
+1. Open the
+   [latest release](https://github.com/greenloop-it-solutions/msp-browser-enhancements/releases/latest).
+2. Download `msp-browser-enhancements-tampermonkey-import.txt` from the assets.
+3. Open the Tampermonkey dashboard → **Utilities** tab.
+4. Under **Import from file**, choose the downloaded file and click **Import**.
+5. Tampermonkey lists every script in the package. **Review the matches and grants**, then
+   confirm.
+
+Each imported script keeps its own `@updateURL`, so it continues to update from GitHub
+afterwards just like an individually installed script.
+
+Before you import:
+
+- **Importing replaces a script you already have installed**, including any local `CONFIG`
+  edits. If you have tweaked a script, install the others individually instead.
+- **No script storage travels with the package** — every entry ships with empty storage.
+- **The format is versioned.** The package targets Tampermonkey backup format
+  `version: "1"`. If a future Tampermonkey release changes it, the import may stop working;
+  the per-script raw URLs in the catalog are the authoritative method and always work.
+
+Releases are cut automatically when a commit to `main` changes any script's `@version`,
+adds a script, or removes one. Documentation and tooling commits do not produce a release.
+
 ## Moving your setup to another browser or machine
 
-Tampermonkey's own export/import is the documented way to do this:
+The import package above installs the *repository's* current scripts. To carry your own
+configuration — local edits and script storage included — use Tampermonkey's own export:
 
 1. Source browser → Tampermonkey dashboard → **Utilities**.
 2. Under **Zip**, click **Export**. Use **Export with local storage** if a script stores
    data you want to carry over.
-3. Target browser → **Utilities** → **Zip → Import** → select the downloaded file.
+3. Target browser → **Utilities** → **Import from file** → select the downloaded file.
 
-Caveats:
-
-- The export format is Tampermonkey's own and varies between extension versions. Use the
-  same major version on both ends where possible.
-- Whether a restored script keeps updating depends on its `@updateURL` surviving the
-  round trip. Installing from the raw GitHub URLs in the catalog is the only method that
-  guarantees update metadata is correct.
-
-This repository does **not** generate a synthetic Tampermonkey import package. Building
-one would mean reproducing an undocumented internal format, and a mismatched package can
-import scripts without their update metadata — leaving scripts that silently never update
-again. See [Bulk installation](../README.md#bulk-installation).
+Use the same major Tampermonkey version on both ends where possible. Whether a restored
+script keeps updating depends on its `@updateURL` surviving the round trip; installing
+from the raw GitHub URLs in the catalog is the only method that guarantees it.

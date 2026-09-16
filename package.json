@@ -12,7 +12,8 @@
     "validate": "node tools/validate-userscripts.mjs",
     "catalog": "node tools/generate-readme.mjs",
     "catalog:check": "node tools/generate-readme.mjs --check",
-    "check": "npm run validate && npm run catalog:check"
+    "check": "npm run validate && npm run catalog:check",
+    "package": "node tools/build-import-package.mjs"
   },
   "userscripts": {
     "owner": "greenloop-it-solutions",

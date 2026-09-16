@@ -8,6 +8,11 @@ dist/
 # Migration scratch copies of original userscripts
 .migration/
 
+# Local reference material: real Tampermonkey backups, exported page markup,
+# scratch captures. These come straight out of a browser profile and can carry
+# script storage, cookies, tokens, and customer data. Never committed.
+refs/
+
 # Editor and OS noise
 .vscode/
 .idea/
