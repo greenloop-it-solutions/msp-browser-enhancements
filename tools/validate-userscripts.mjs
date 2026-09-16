@@ -161,8 +161,16 @@ function debugHelperRanges(source) {
 
     let match;
     while ((match = declarationPattern.exec(source)) !== null) {
+        const lineEnd = source.indexOf('\n', match.index);
+        const declarationEnd = lineEnd === -1 ? source.length : lineEnd;
         const openBrace = source.indexOf('{', match.index);
-        if (openBrace === -1) {
+
+        // A concise arrow body has no brace on the declaration line, for example
+        // `const debugLog = (...args) => CONFIG.debug && console.debug(...args);`.
+        // Without this bound the search would latch onto some later unrelated
+        // brace and silently whitelist everything in between.
+        if (openBrace === -1 || openBrace > declarationEnd) {
+            ranges.push([match.index, declarationEnd]);
             continue;
         }
 
