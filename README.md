@@ -66,7 +66,21 @@ see [Bulk installation](#bulk-installation) for why, and for the alternatives.
 
 <!-- BEGIN SCRIPT CATALOG -->
 
-_No userscripts have been migrated into this repository yet._
+### Rewst
+
+#### Rewst Form Enhancements
+
+Auto-expands multiline text areas to fit their content and enlarges the virtualized autocomplete dropdown on Rewst form pages.
+
+| | |
+| --- | --- |
+| **Version** | `1.1.0` |
+| **Matches** | `https://app.rewst.io/organizations/*/form/*` |
+| **Grants** | `none` |
+| **Runs at** | `document-idle` |
+| **Source** | [scripts/rewst/form-enhancements.user.js](https://github.com/greenloop-it-solutions/msp-browser-enhancements/blob/main/scripts/rewst/form-enhancements.user.js) |
+
+**[Install Rewst Form Enhancements](https://raw.githubusercontent.com/greenloop-it-solutions/msp-browser-enhancements/main/scripts/rewst/form-enhancements.user.js)** — opens the Tampermonkey install prompt. Review the metadata block before confirming.
 
 <!-- END SCRIPT CATALOG -->
 
