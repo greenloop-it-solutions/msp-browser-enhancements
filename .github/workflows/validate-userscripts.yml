@@ -1,0 +1,39 @@
+name: Validate userscripts
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate userscripts and catalog
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      # The repository has no runtime dependencies, but `npm ci` enforces that
+      # package-lock.json is present and consistent with package.json.
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate userscripts
+        run: npm run validate
+
+      # Fails when README.md's generated catalog is stale. This workflow never
+      # commits on the author's behalf -- run `npm run catalog` locally and
+      # commit the result.
+      - name: Verify README catalog is current
+        run: npm run catalog:check

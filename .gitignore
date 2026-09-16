@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Generated release artifacts (never committed to the source tree)
+dist/
+*.zip
+
+# Migration scratch copies of original userscripts
+.migration/
+
+# Editor and OS noise
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment and secrets
+.env
+.env.*
+*.pem
+*.key

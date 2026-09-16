@@ -1,0 +1,31 @@
+{
+  "name": "msp-browser-enhancements",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Tampermonkey userscripts that enhance the web applications used day to day by an MSP.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "validate": "node tools/validate-userscripts.mjs",
+    "catalog": "node tools/generate-readme.mjs",
+    "catalog:check": "node tools/generate-readme.mjs --check",
+    "check": "npm run validate && npm run catalog:check"
+  },
+  "userscripts": {
+    "owner": "greenloop-it-solutions",
+    "repository": "msp-browser-enhancements",
+    "branch": "main",
+    "scriptsDirectory": "scripts",
+    "applications": {
+      "rewst": "Rewst",
+      "connectwise": "ConnectWise",
+      "it-glue": "IT Glue",
+      "microsoft-365": "Microsoft 365",
+      "empath": "Empath",
+      "other": "Other"
+    }
+  }
+}
